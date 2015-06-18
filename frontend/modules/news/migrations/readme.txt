@@ -1,0 +1,1 @@
+php yii migrate/up --migrationPath=frontend/modules/news/migrations
