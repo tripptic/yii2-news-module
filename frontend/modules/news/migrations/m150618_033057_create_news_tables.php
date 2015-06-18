@@ -7,18 +7,20 @@ class m150618_033057_create_news_tables extends Migration
 {
     public function up()
     {
-		$this->createTable('news', [
-            'id'     => 'pk',
-			'theme_id' =>  'int(11) DEFAULT NULL',
-            'title'  => Schema::TYPE_STRING . ' NOT NULL',
-            'text'   => Schema::TYPE_TEXT . ' NOT NULL',
-            'date_create' => Schema::TYPE_DATETIME
-        ]);
 		$this->createTable('themes', [
             'id'     => 'pk',
             'title'  => Schema::TYPE_STRING . ' NOT NULL'
         ]);
-		$this->addForeignKey('FK_news', 'news', 'themes_id', 'themes', 'id');
+		$this->createTable('news', [
+            'id'     => 'pk',
+			'theme_id' =>  Schema::TYPE_INTEGER. ' DEFAULT NULL',
+            'title'  => Schema::TYPE_STRING . ' NOT NULL',
+            'text'   => Schema::TYPE_TEXT . ' NOT NULL',
+            'date_create' => Schema::TYPE_DATETIME
+        ]);
+		$this->createIndex('FK_news', 'news', 'theme_id');
+		$this->addForeignKey('FK_news', 'news', 'theme_id', 'themes', 'id');
+		for($i=0;$i<6;$i++) $this->insert('themes',[ 'title' =>'Тема'.$i ]);
     }
 
     public function down()
