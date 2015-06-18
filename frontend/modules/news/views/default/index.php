@@ -3,7 +3,8 @@ use yii\helpers\Html;
 use yii\widgets\LinkPager;
 use yii\bootstrap\Nav;
 use yii\helpers\Url;
-$this->registerCss(".news-menu li { float:none;}");
+$this->registerCss(".news-menu li{ float:none;};");
+$this->registerCss(".news-content{margin-left:150px;}");
 ?>
 <h1>Новости</h1>
 <?= Nav::widget(
@@ -13,7 +14,7 @@ $this->registerCss(".news-menu li { float:none;}");
 	]
 )?>
 
-<ul>
+<div class='news-content'>
 <?php foreach ($news as $news_item): ?>
     <div>
         <h4><?= $news_item->title ?></h4>
@@ -21,7 +22,6 @@ $this->registerCss(".news-menu li { float:none;}");
 		<div><?= \yii\helpers\StringHelper::truncate($news_item->text, 256) . '<br/>'. Html::a('Читать далее', urldecode(Url::toRoute(['default/view', 'id' => $news_item->id])))?></div>
     </div>
 <?php endforeach; ?>
-</ul>
 </div>
 
 <?= LinkPager::widget(['pagination' => $pagination]) ?>

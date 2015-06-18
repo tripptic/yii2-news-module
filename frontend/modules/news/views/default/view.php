@@ -5,6 +5,13 @@ use yii\bootstrap\Nav;
 use yii\helpers\Url;
 $this->registerCss(".news-menu li { float:none;}");
 ?>
+<h1>Новости</h1>
+<?= Nav::widget(
+	[
+		'options' => ['class' => ' navbar-nav navbar-left news-menu'],
+		'items' => $menuItems
+	]
+)?>
 <h1><?= $model->title ?></h1>
 <div><?= Yii::$app->formatter->asDate($model->date_create, 'yyyy-MM-dd') . ' ' . $model->theme ?></div>
 <div><?= $model->text . '<br/>'.  Html::a('Все новости', urldecode(Url::to(['index'])))?></div>
