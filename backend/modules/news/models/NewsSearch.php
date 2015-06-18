@@ -5,7 +5,7 @@ namespace backend\modules\news\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use backend\modules\news\models\News;
+use frontend\modules\news\models\News;
 
 /**
  * SearchNews represents the model behind the search form about `backend\modules\news\models\News`.

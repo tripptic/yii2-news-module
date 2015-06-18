@@ -3,7 +3,7 @@
 namespace backend\modules\news\controllers;
 
 use Yii;
-use backend\modules\news\models\News;
+use frontend\modules\news\models\News;
 use backend\modules\news\models\NewsSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -112,9 +112,10 @@ class DefaultController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = News::findOne($id)) !== null) {
+        //if (($model = News::findOne($id)) !== null) {
+        if (($model = News::find()->select('news.id, news.title, date_create, text, themes.title as theme')->where(['news.id' => $id])->leftJoin('themes', '`themes`.`id` = `news`.`theme_id`')->one()) !== null) 
             return $model;
-        } else {
+         else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }

@@ -1,6 +1,7 @@
 <?php
 
 namespace backend\modules\news\models;
+use yii\helpers\ArrayHelper;
 
 use Yii;
 
@@ -20,6 +21,11 @@ class Themes extends \yii\db\ActiveRecord
     public static function tableName()
     {
         return 'themes';
+    }
+	
+	public static function getThemesList() { 
+        $models = Themes::find()->asArray()->all();
+        return ArrayHelper::map($models, 'id', 'title');
     }
 	
 	    /**

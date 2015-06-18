@@ -29,45 +29,18 @@ class DefaultController extends Controller
 			->limit($pagination->limit)
 			->all();
 			
-		$menu = News::find()->select('YEAR(`date_create`) as year, MONTH(`date_create`) as month, date_create, COUNT(*) as countf')
-		->groupBy('year, month')
-		->orderBy('year DESC, month')
-		->all();
-			
-		$months = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
-		$menuItems = [];
-		$current_year = null;
-        foreach ($menu as $value) {
-			if ($current_year != $value['year']) 
-			{
-				$current_year = $value['year'];
-				$menuItems[] = ['label' => $current_year , 'url' => '/frontend/web/index.php?r=news/default/index&year='.$current_year];
-			}
-			$menuItems[] = ['label' => $months[$value['month']-1].' ('.$value->countf.')' , 'url' => '/frontend/web/index.php?r=news/default/index&date='.Yii::$app->formatter->asDate($value->date_create, 'yyyy-MM')];
-		}		
-		
-		$theme_menu = News::find()->select('themes.title, COUNT(*) as countf')
-		->leftJoin('themes', '`themes`.`id` = `news`.`theme_id`')
-		->groupBy('themes.title')
-		->all();
-		
-		foreach ($theme_menu as $value) 
-            if ($value['title']) $menuItems[] = ['label' => $value['title'].' ('.$value->countf.')' , 'url' => '/frontend/web/index.php?r=news/default/index&theme='.$value['title']];
-
         return $this->render('index', [
 			'news' => $news,
 			'pagination' => $pagination,
-			'menuItems' => $menuItems,
+			'menuItems' => $this->getMenuItems(),
 		]);
     }
 	
 	protected function findModel($id)
     {
-        if (($model = News::find()->select('news.id, news.title, date_create, text, themes.title as theme')->where(['news.id' => $id])->leftJoin('themes', '`themes`.`id` = `news`.`theme_id`')->one()) !== null) {
+        if (($model = News::find()->select('news.id, news.title, date_create, text, themes.title as theme')->where(['news.id' => $id])->leftJoin('themes', '`themes`.`id` = `news`.`theme_id`')->one()) !== null) 
             return $model;
-        } else {
-            throw new HttpException(404);
-        }
+        else throw new HttpException(404);
     }
 	
 	public function actionView($id)
@@ -76,5 +49,34 @@ class DefaultController extends Controller
             'model' => $this->findModel($id),
         ]);
 	}
-
+	
+	public function getMenuItems()
+	{
+		$date_menu = News::find()->select('YEAR(`date_create`) as year, MONTH(`date_create`) as month, date_create, COUNT(*) as countf')
+		->groupBy('year, month')
+		->orderBy('year DESC, month')
+		->all();
+			
+		$months = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+		$menuItems = [];
+		$current_year = null;
+        foreach ($date_menu as $value) {
+			if ($current_year != $value['year']) 
+			{
+				$current_year = $value['year'];
+				$menuItems[] = ['label' => $current_year , 'url' => Url::to(['index','year'=>$current_year])];
+			}
+			$menuItems[] = ['label' => $months[$value['month']-1].' ('.$value->countf.')' , 'url' => Url::to(['index','date'=>Yii::$app->formatter->asDate($value->date_create, 'yyyy-MM')])];
+		}		
+		
+		$theme_menu = News::find()->select('themes.title, COUNT(*) as countf')
+		->leftJoin('themes', '`themes`.`id` = `news`.`theme_id`')
+		->groupBy('themes.title')
+		->all();
+		
+		foreach ($theme_menu as $value) 
+            if ($value['title']) $menuItems[] = ['label' => $value['title'].' ('.$value->countf.')' , 'url' => Url::to(['index','theme'=>$value['title']])];
+		return $menuItems;
+	}
+	
 }
